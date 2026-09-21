@@ -15,6 +15,24 @@ canvas {
     display: block;
 }
 
+.greeting {
+    position: fixed;
+    top: clamp(20px, 3vw, 40px);
+    left: clamp(20px, 3vw, 40px);
+    z-index: 100;
+    max-width: calc(100vw - 40px);
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: bold;
+    line-height: 1.2;
+    letter-spacing: -0.04em;
+    color: #ffe4bb;
+    background: linear-gradient(110deg, #fff7e8 10%, #ffd093 55%, #ff9270 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    pointer-events: none;
+}
+
 #info {
     position: absolute;
     top: 20px;
