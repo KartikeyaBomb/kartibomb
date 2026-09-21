@@ -228,9 +228,11 @@ document.body.appendChild(renderer.domElement);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
-controls.rotateSpeed = -0.5;
-controls.minDistance = 5;
-controls.maxDistance = 50;
+controls.rotateSpeed = -0.4;
+controls.minDistance = 22;
+controls.maxDistance = 22;
+controls.enablePan = false;
+;
 controls.target.set(0, 0, 0);
 
 // ============================================================================
@@ -271,84 +273,14 @@ blackHoleSimulation.createBlackHole();
 // UI CONTROLS
 // ============================================================================
 
-const ui = new BlackHoleUI(config, {
-  // Handle individual uniform changes
-  // Note: Tweakpane already updates config via binding, we just sync to shader uniforms
-  onUniformChange: (key, value) => {
-    blackHoleSimulation.updateUniforms({ [key]: value });
-  },
-
-  // Handle bloom changes
-  onBloomChange: (property, value) => {
-    if (bloomPassNode) {
-      bloomPassNode[property].value = value;
-    }
-  },
-
-  // Handle regeneration (e.g., after major config changes)
-  onRegenerate: () => {
-    blackHoleSimulation.updateUniforms(config);
-    blackHoleSimulation.regenerate();
-  },
-
-  // Save current config to localStorage
-  onSaveConfig: () => {
-    saveConfig(config);
-  },
-
-  // Clear localStorage and reload with defaults
-  onClearConfig: () => {
-    clearConfig();
-    window.location.reload();
-  },
-
-  // Reset to defaults without clearing localStorage
-  onResetToDefaults: () => {
-    Object.assign(config, defaultConfig);
-    blackHoleSimulation.updateUniforms(config);
-    if (bloomPassNode) {
-      bloomPassNode.threshold.value = config.bloomThreshold;
-      bloomPassNode.strength.value = config.bloomStrength;
-      bloomPassNode.radius.value = config.bloomRadius;
-    }
-  },
-
-  // Camera animation controls
-  onToggleCameraAnimation: () => {
-    return cameraAnimation.toggle();
-  },
-
-  getCameraAnimationState: () => {
-    return cameraAnimation.playing;
-  }
-});
+const ui = new BlackHoleUI(config);
 
 // ============================================================================
 // FPS COUNTER
 // ============================================================================
 
-let frameCount = 0;
-let lastTime = performance.now();
-let fps = 60;
 
-function updateFPS() {
-  frameCount++;
-  const currentTime = performance.now();
-  const deltaTime = currentTime - lastTime;
 
-  if (deltaTime >= 1000) {
-    fps = Math.round((frameCount * 1000) / deltaTime);
-    frameCount = 0;
-    lastTime = currentTime;
-
-    // Update UI
-    const fpsElement = document.getElementById('fps');
-    if (fpsElement) {
-      fpsElement.textContent = fps;
-    }
-    ui.updateFPS(fps);
-  }
-}
 
 // ============================================================================
 // ANIMATION LOOP
@@ -400,7 +332,6 @@ window.addEventListener('resize', () => {
 renderer.init().then(() => {
   postProcessing = new THREE.PostProcessing(renderer);
   setupBloom();
-  ui.setBloomNode(bloomPassNode);
   animate();
 }).catch(err => {
   console.error('Failed to initialize WebGPU renderer:', err);
