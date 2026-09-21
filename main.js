@@ -12,6 +12,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { BlackHoleSimulation } from './blackhole.js';
 import { BlackHoleUI } from './ui.js';
 import { CameraAnimation } from './camera-animation.js';
+import { updateDiskMarkers } from './disk-popups.js';
 
 // ============================================================================
 // LOCAL STORAGE
@@ -300,6 +301,7 @@ async function animate() {
 
   // Update controls (only effective when animation not playing)
   controls.update();
+  updateDiskMarkers(camera, config);
 
   // Update black hole simulation
   blackHoleSimulation.update(deltaTime, camera);
@@ -311,7 +313,6 @@ async function animate() {
     renderer.render(scene, camera);
   }
 
-  updateFPS();
 }
 
 // ============================================================================
