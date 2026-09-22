@@ -48,11 +48,15 @@
 .disk-popup {
   position: fixed;
   margin: 0;
-  inset: auto;
-  width: min(350px, calc(100vw - 32px));
-  max-height: calc(100dvh - 32px);
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100vw - clamp(24px, 5vw, 80px));
+  height: calc(100dvh - clamp(24px, 5vh, 80px));
+  max-width: none;
+  max-height: none;
   overflow: auto;
-  padding: 32px;
+  padding: clamp(64px, 10vh, 120px) clamp(24px, 6vw, 96px);
+  text-align: center;
   border: 1px solid var(--orbit-border);
   border-radius: 18px;
   background: linear-gradient(145deg, rgba(39, 27, 26, .95), rgba(9, 13, 23, .96));
@@ -64,10 +68,10 @@
 .disk-popup::backdrop { background: rgba(0, 0, 0, .18); }
 .popup-close {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 36px;
-  height: 36px;
+  top: 16px;
+  right: 16px;
+  width: 44px;
+  height: 44px;
   border: 0;
   border-radius: 50%;
   background: #ffffff08;
@@ -82,11 +86,84 @@
 .popup-placeholder { margin-top: 28px; padding-top: 16px; border-top: 1px solid #ffffff12; font-size: 10px; line-height: 1.6; color: #918786; }
 .disk-marker { flex-direction: column; padding: 8px; border: 0; background: transparent; gap: 8px; }
 .marker-symbol { width: 42px; height: 42px; border: 1px solid var(--orbit-border); background: #17121bd9; }
-.disk-popup { inset: 50% auto auto 50%; transform: translate(-50%, -50%); width: min(520px, calc(100vw - 32px)); padding: 48px 36px; text-align: center; }
-.disk-popup h2 { font-size: 48px; }
+.marker-label {
+  padding: 7px 12px;
+  border: 1px solid rgba(255, 208, 147, .35);
+  border-radius: 8px;
+  background: rgba(8, 10, 16, .92);
+  color: #fff3df;
+  font-size: clamp(14px, 1.2vw, 18px);
+  font-weight: bold;
+  letter-spacing: .02em;
+  white-space: nowrap;
+  text-shadow: 0 1px 3px #000;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, .45);
+}
+.disk-popup h2 { font-size: clamp(40px, 6vw, 80px); }
+.popup-copy > p { max-width: 680px; margin-left: auto; margin-right: auto; }
+.disk-popup.is-about {
+  padding: 48px clamp(16px, 2vw, 32px) 20px;
+  text-align: left;
+}
+.disk-popup.is-about[open] {
+  display: grid;
+  grid-template-columns: 48% minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: clamp(20px, 4vw, 64px);
+  align-items: center;
+}
+.about-photo {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: contain;
+  object-position: left center;
+}
+.about-photo[hidden] { display: none; }
+.is-about .popup-copy { align-self: start; max-height: 100%; overflow: auto; }
+.is-about h2 { font-size: clamp(48px, 7vw, 100px); }
+.is-about .popup-intro, .is-about .popup-detail {
+  font-family: 'Satoshi', sans-serif;
+  font-size: clamp(22px, 2.2vw, 32px);
+  line-height: 1.7;
+  color: var(--orbit-ink);
+}
+.is-about .popup-intro { margin-top: clamp(40px, 6vh, 72px); }
+.is-about .popup-detail { margin-top: 5.1em; }
+.is-about .popup-copy > p { margin-left: 0; }
+.about-constellation { display: none; }
+.is-about .about-constellation {
+  display: block;
+  width: min(100%, 480px);
+  margin-top: 36px;
+  pointer-events: none;
+}
+.about-constellation svg { display: block; width: 100%; height: auto; }
+.constellation-lines { stroke: #ffd093; stroke-width: .75; opacity: .18; }
+.constellation-stars { fill: #ffe4bb; }
+.constellation-dust { fill: #bacded; opacity: .3; }
+.constellation-orbit { stroke: #ffd093; stroke-width: .5; opacity: .16; }
+.constellation-satellite { fill: #ffe4bb; transform-origin: 248px 38px; }
+@media (prefers-reduced-motion: no-preference) {
+  .is-about[open] .constellation-stars circle {
+    animation: constellation-twinkle 5s ease-in-out infinite alternate;
+  }
+  .is-about[open] .constellation-stars circle:nth-child(2n) { animation-delay: -3s; }
+  .is-about[open] .constellation-stars circle:nth-child(3n) { animation-delay: -1.5s; }
+  .is-about[open] .constellation-satellite { animation: constellation-orbit 24s linear infinite; }
+}
+@keyframes constellation-twinkle {
+  from { opacity: .3; }
+  to { opacity: .85; }
+}
+@keyframes constellation-orbit {
+  to { transform: rotate(360deg); }
+}
 .disk-popup::backdrop { background: #0007; backdrop-filter: blur(3px); }
 @media (max-width: 600px) {
   .disk-marker { gap: 5px; padding-right: 10px; font-size: 11px; }
-  .disk-popup { padding: 28px 24px; }
+  .disk-popup { padding: 72px 24px 32px; }
+  .disk-popup.is-about[open] { gap: 16px; }
+  .is-about h2 { font-size: clamp(36px, 8vw, 48px); }
 }
 @media (prefers-reduced-motion: reduce) { .disk-marker { transition: none; } }
