@@ -1,0 +1,75 @@
+.singularity-music {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: 64px;
+  height: 64px;
+  transform: translate(-50%, -50%);
+  z-index: 105;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+  display: grid;
+  place-items: center;
+  color: #ffe6c6;
+}
+.singularity-music-icon {
+  width: clamp(22px, 2.3vw, 30px);
+  height: clamp(22px, 2.3vw, 30px);
+  opacity: .4;
+  transition: opacity .2s ease;
+  pointer-events: none;
+}
+.singularity-music:hover .singularity-music-icon,
+.singularity-music:focus-visible .singularity-music-icon { opacity: .9; }
+@media (prefers-reduced-motion: reduce) {
+  .singularity-music-icon { transition: none; }
+}
+.singularity-music[hidden], .music-player[hidden] { display: none; }
+.singularity-music:focus-visible { outline: 1px solid #ffd093; outline-offset: 4px; }
+.music-player {
+  position: fixed;
+  right: max(24px, env(safe-area-inset-right));
+  bottom: max(24px, env(safe-area-inset-bottom));
+  z-index: 120;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) 40px;
+  align-items: center;
+  width: min(480px, calc(100vw - 32px));
+  min-height: 80px;
+  padding: 4px;
+  border: 1px solid #ffd09340;
+  border-radius: 12px;
+  background: #0b0d16e6;
+  box-shadow: 0 8px 32px #0005;
+  overflow: hidden;
+}
+.music-embed { display: block; width: 100%; height: 80px; border: 0; border-radius: 12px; }
+@media (max-width: 600px) { .music-player { right: 16px; bottom: max(16px, env(safe-area-inset-bottom)); } }
+
+.music-previous, .music-next {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 40px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #ffe6c6;
+  font-size: 20px;
+  cursor: pointer;
+}
+.music-previous:disabled, .music-next:disabled { opacity: .35; cursor: default; }
+.music-previous:hover:enabled, .music-next:hover:enabled { background: #ffd09320; }
+.music-player button:focus-visible { outline: 2px solid #ffd093; outline-offset: 1px; }
+@media (max-width: 420px) {
+  .music-player { grid-template-columns: 1fr 1fr; }
+  .music-embed { grid-column: 1 / -1; grid-row: 1; }
+  .music-previous, .music-next { justify-self: center; }
+}
+
+.music-embed iframe { display: block; width: 100%; height: 80px; border: 0; border-radius: 12px; }
+.music-embed-mount { height: 80px; display: grid; place-items: center; }
+.music-embed-mount a { color: #ffe6c6; font: 14px 'Satoshi', sans-serif; }

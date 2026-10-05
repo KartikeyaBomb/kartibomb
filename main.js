@@ -13,6 +13,7 @@ import { BlackHoleSimulation } from './blackhole.js';
 import { BlackHoleUI } from './ui.js';
 import { CameraAnimation } from './camera-animation.js';
 import { updateDiskMarkers } from './disk-popups.js';
+import { updateMusicTrigger } from './music-player.js';
 
 // ============================================================================
 // LOCAL STORAGE
@@ -302,6 +303,7 @@ async function animate() {
   // Update controls (only effective when animation not playing)
   controls.update();
   updateDiskMarkers(camera, config);
+  updateMusicTrigger(camera, config);
 
   // Update black hole simulation
   blackHoleSimulation.update(deltaTime, camera);
