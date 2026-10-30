@@ -14,6 +14,7 @@ import { BlackHoleUI } from './ui.js';
 import { CameraAnimation } from './camera-animation.js';
 import { updateDiskMarkers } from './disk-popups.js';
 import { updateMusicTrigger } from './music-player.js';
+import { compactViewport } from './viewport.js';
 
 // ============================================================================
 // LOCAL STORAGE
@@ -219,8 +220,10 @@ camera.lookAt(0, 0, 0);
 
 const renderer = new THREE.WebGPURenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, compactViewport.matches ? 1 : 2));
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.domElement.className = 'simulation-canvas';
+renderer.domElement.setAttribute('aria-hidden', 'true');
 document.body.appendChild(renderer.domElement);
 
 // ============================================================================
@@ -289,6 +292,7 @@ const ui = new BlackHoleUI(config);
 // ============================================================================
 
 let lastFrameTime = performance.now();
+const portfolioDialog = document.querySelector('#disk-popup');
 
 async function animate() {
   requestAnimationFrame(animate);
@@ -296,6 +300,9 @@ async function animate() {
   const currentTime = performance.now();
   const deltaTime = Math.min((currentTime - lastFrameTime) / 1000, 0.033);
   lastFrameTime = currentTime;
+
+  // Spend the GPU budget on the scene only while it is visible and in use.
+  if (document.hidden || portfolioDialog.open || document.documentElement.dataset.portfolioView === 'simple') return;
 
   // Update camera animation (if playing)
   cameraAnimation.update(deltaTime);
@@ -324,6 +331,7 @@ async function animate() {
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, compactViewport.matches ? 1 : 2));
   renderer.setSize(window.innerWidth, window.innerHeight);
   blackHoleSimulation.onResize(window.innerWidth, window.innerHeight);
 });
@@ -338,12 +346,7 @@ renderer.init().then(() => {
   animate();
 }).catch(err => {
   console.error('Failed to initialize WebGPU renderer:', err);
-  // Show fallback message
-  document.body.innerHTML = `
-    <div style="color: white; padding: 20px; text-align: center;">
-      <h1>WebGPU Not Supported</h1>
-      <p>This demo requires a browser with WebGPU support.</p>
-      <p>Try Chrome 113+ or Edge 113+ on desktop.</p>
-    </div>
-  `;
+  // The portfolio and its dock remain usable without graphics support.
+  controls.dispose();
+  renderer.domElement.remove();
 });

@@ -1,98 +1,23 @@
 import './disk-popups.css';
 import { Vector3 } from 'three/webgpu';
-import portraitUrl from './assets/photo.png';
-import droneVideoUrl from './assets/rhodesdrone.mp4?url';
-import currentReadUrl from './assets/chiangstories.jpg';
-import autozoneLogoUrl from './assets/autozonelogo.png';
-import blightImageUrl from './assets/blightpredictor1.png';
-import blightVideoUrl from './assets/blightpredictor2.mp4?url';
-import memphisImageUrl from './assets/MemphisInMotion1.png';
-import memphisVideoUrl from './assets/MIM2.mp4?url';
-import linkedinLogoUrl from './assets/linkedin.jpg';
-import resumeLogoUrl from './assets/resumelogo.jpg';
-import githubLogoUrl from './assets/githublogo.png';
-import innerJFirstVideoUrl from './assets/innerJ1.mov?url';
-import innerJSecondVideoUrl from './assets/innerJ2.mov?url';
+import { compactViewport } from './viewport.js';
+import { notesLinks, skillGroups, sections, projects, experiences, portraitUrl, currentReadUrl, githubLogoUrl } from './portfolio-content.js';
 
-const notesLinks = [
-  { label: 'LinkedIn', logo: linkedinLogoUrl, href: 'https://www.linkedin.com/in/karti-bomb-b13ab72ba' },
-  { label: 'Download resume', logo: resumeLogoUrl, href: `${import.meta.env.BASE_URL}kartikeya-bomb-resume.pdf`, download: true },
-  { label: 'GitHub', logo: githubLogoUrl, href: 'https://github.com/KartikeyaBomb' },
-];
-
-const skillGroups = [
-  { title: 'Languages', skills: ['Python', 'TypeScript', 'JavaScript', 'Java', 'C++', 'C', 'SQL'] },
-  { title: 'AI engineering', skills: ['PyTorch', 'OpenAI API', 'Hugging Face', 'LangGraph', 'OpenCV', 'ONNX', 'LangSmith'] },
-  { title: 'Frameworks', skills: ['React', 'Next.js', 'Spring Boot', 'FastAPI', 'Flask'] },
-  { title: 'Data & infrastructure', skills: ['PostgreSQL', 'Redis', 'Kafka', 'Docker', 'Kubernetes', 'AWS', 'GCP', 'Spark'] },
-];
-
-const sections = [
-  { title: 'About Me', eyebrow: '', text: "Hi, I'm Kartikeya Bomb, a computer science, math, and economics major at Rhodes College passionate about intersecting healthcare with technology. If I'm not thinking about an interesting problem, you will find me watching the night sky, flying my drone or reading a science fiction book.", detail: '' },
-  { title: 'Projects', eyebrow: '02 / SELECTED WORK', text: 'Things built. Ideas explored.', detail: 'Feature your projects here with a short description and links to the work.' },
-  { title: 'Notes', eyebrow: '', text: '', detail: '' },
-  { title: 'Experience', eyebrow: '', text: '', detail: '' },
-];
 let active = null;
-const projects = [
-  {
-    title: 'Blight Predictor', website: 'https://blight-predictor.vercel.app/', github: 'https://github.com/KartikeyaBomb/BlightPredictor', description: 'Blight Predictor is a Memphis blight-analysis platform powered by React, Mapbox GL JS, and Python with NumPy and Matplotlib. It brings together eviction filings, police incidents, and service requests to reveal monthly trends and correlations across four neighborhoods. An interactive ZIP-code heatmap and neighborhood-level breakdowns highlight areas for proactive blight mitigation.',
-    media: [
-      { type: 'image', src: blightImageUrl, alt: 'Blight Predictor screenshot' },
-      { type: 'video', src: blightVideoUrl, alt: 'Blight Predictor demo' },
-    ],
-  },
-  {
-    title: 'Memphis in Motion', github: 'https://github.com/KartikeyaBomb/fronthacks', description: 'Memphis in Motion is a transit-planning platform for Memphis, powered by React, TypeScript, Python/Flask, and PostgreSQL/PostGIS. LangGraph agents validate requests, XGBoost forecasts ridership, and Google OR-Tools optimizes proposed routes. Its analysis of 10,000 simulated trip requests identifies five priority routes and projects 20% shorter commute times compared with existing service.',
-    media: [
-      { type: 'image', src: memphisImageUrl, alt: 'Memphis in Motion screenshot' },
-      { type: 'video', src: memphisVideoUrl, alt: 'Memphis in Motion demo' },
-    ],
-  },
-
-  {
-    title: 'innerJ', website: 'https://inner-j.vercel.app/', github: 'https://github.com/KartikeyaBomb/innerJ', description: 'innerJ is a full-stack platform where 100+ users discover, test, and share reusable AI prompts. Optimized PostgreSQL retrieval and Redis caching reduce feed response time by 58%. OpenAI automatically organizes 1,000+ prompts, helping users find relevant content and explore new ways to work with AI.',
-    media: [
-      { type: 'video', src: innerJFirstVideoUrl, alt: 'innerJ demo 1' },
-      { type: 'video', src: innerJSecondVideoUrl, alt: 'innerJ demo 2' },
-    ],
-  },
-];
-// Logo accepts an imported image URL; initials are shown when no logo is supplied.
-const experiences = [
-  {
-    company: 'AutoZone', logo: autozoneLogoUrl, initials: 'AZ',
-    dates: 'May 2025 - Aug. 2026', location: 'Memphis, TN',
-    role: 'Software Engineering Intern',
-    accomplishments: [
-      'Built an internal React platform for AI-driven store onboarding, using Spring Boot APIs to validate bulk imports and review proposed operational changes.',
-      'Engineered a Python AI agent that reconciled HR, store, and Bringg data, diagnosed inconsistencies, and executed remediation workflows through structured tool calls.',
-      'Built agent state and recovery logic so AI workflows could verify completed actions, retry failed steps, and avoid repeating successful operations.',
-      'Built a distributed pin-pad management system across 7,000+ stores using C/C++ for device communication, IP-based discovery, WebSockets, and React, saving 840 hours and $133K.',
-    ],
-  },
-  {
-    company: 'RK Heart and Vascular Care', logo: '', initials: 'RK',
-    dates: 'Aug. 2024 - Present', location: 'Memphis, TN',
-    role: 'Software Engineering Intern',
-    accomplishments: [
-      'Integrated PracticeSuite with a custom AI revenue-cycle platform to automate coding, claim submission, denial management, and payment posting across 300+ monthly claims.',
-      'Built REST/FHIR workflows with claim-state orchestration and audit logging, reducing manual billing work by 100%.',
-      'Integrated a rideshare system with Python/Flask and Baptist Hospital APIs, automating 250+ monthly ride requests and cutting patient no-shows by 40%.',
-    ],
-  },
-];
 let projectIndex = 0;
 let experienceIndex = 0;
 const root = document.createElement('div');
 root.className = 'disk-navigation';
 root.innerHTML = `
-  <nav class="disk-markers" aria-label="Explore Kartikeya’s portfolio">
-    ${sections.map((s, i) => `<button class="disk-marker marker-${i}" data-section="${i}" hidden aria-haspopup="dialog" aria-controls="disk-popup"><span class="marker-symbol" aria-hidden="true">+</span><span class="marker-label">${s.title}</span></button>`).join('')}
+  <nav class="disk-markers is-docked" aria-label="Explore Kartikeya’s portfolio">
+    ${sections.map((s, i) => `<button class="disk-marker marker-${i}" data-section="${i}" aria-haspopup="dialog" aria-controls="disk-popup"><span class="marker-symbol" aria-hidden="true">+</span><span class="marker-label">${s.title}</span></button>`).join('')}
   </nav>
   <dialog id="disk-popup" class="disk-popup" aria-labelledby="disk-popup-title">
     <button class="popup-close" aria-label="Close popup">×</button>
-    <img class="about-photo" src="${portraitUrl}" alt="Kartikeya" hidden>
+    <div class="popup-body">
+    <div class="about-sidebar" hidden>
+      <img class="about-photo" src="${portraitUrl}" alt="Kartikeya">
+    </div>
     <div class="popup-copy">
     <p class="popup-eyebrow"></p><h2 id="disk-popup-title"></h2>
     <p class="popup-intro"></p><p class="popup-detail"></p>
@@ -107,19 +32,6 @@ root.innerHTML = `
         ${skillGroups.map(group => `<section class="notes-skill-group"><h4>${group.title}</h4><ul>${group.skills.map(skill => `<li>${skill}</li>`).join('')}</ul></section>`).join('')}
       </div>
     </section>
-    <div class="about-media" hidden>
-      <div class="about-campus">
-        <p class="about-media-label">Rhodes college campus</p>
-    <video class="about-video" controls playsinline preload="metadata" aria-label="Drone footage of Rhodes College" hidden>
-      <source src="${droneVideoUrl}" type="video/mp4">
-      Your browser does not support embedded video. <a href="${droneVideoUrl}">Watch the drone video</a>.
-    </video>
-      </div>
-      <div class="about-reading">
-        <p class="about-media-label">Current read:</p>
-        <img class="about-book" src="${currentReadUrl}" alt="Current read book cover" loading="lazy">
-      </div>
-    </div>
     <div class="experience-list" hidden></div>
     <nav class="experience-pagination" aria-label="Browse experience" hidden>
       <button type="button" class="experience-previous" aria-label="Previous experience">←</button>
@@ -127,6 +39,10 @@ root.innerHTML = `
       <button type="button" class="experience-next" aria-label="Next experience">→</button>
     </nav>
     <p class="popup-placeholder">Preview content · Make this space yours</p>
+    </div>
+    <div class="about-reading" hidden>
+      <p class="about-media-label">Current read:</p>
+      <img class="about-book" src="${currentReadUrl}" alt="Current read book cover" loading="lazy">
     </div>
     <section class="project-view" hidden aria-label="Project slideshow">
       <h2 id="projects-heading">Projects</h2>
@@ -141,6 +57,7 @@ root.innerHTML = `
         <button type="button" class="project-next" aria-label="Next project">→</button>
       </nav>
     </section>
+    </div>
   </dialog>
 `;
 document.body.append(root);
@@ -281,10 +198,8 @@ markers.forEach((button, index) => button.addEventListener('click', () => {
     projectIndex = 0;
     renderProject();
   }
-  root.querySelector('.about-photo').hidden = index !== 0;
-  root.querySelector('.about-media').hidden = index !== 0;
-  root.querySelector('.about-video').hidden = index !== 0;
-  if (index !== 0) root.querySelector('.about-video').pause();
+  root.querySelector('.about-sidebar').hidden = index !== 0;
+  root.querySelector('.about-reading').hidden = index !== 0;
   root.querySelector('.popup-eyebrow').textContent = section.eyebrow;
   root.querySelector('.popup-eyebrow').hidden = !section.eyebrow;
   root.querySelector('h2').textContent = section.title;
@@ -295,6 +210,7 @@ markers.forEach((button, index) => button.addEventListener('click', () => {
   root.querySelector('.popup-placeholder').hidden = index === 0 || index === 2 || index === 3;
   button.dataset.active = 'true';
   dialog.showModal();
+  root.querySelector('.popup-body').scrollTop = 0;
 }));
 root.querySelector('.popup-close').addEventListener('click', () => dialog.close());
 dialog.addEventListener('click', event => {
@@ -312,6 +228,13 @@ const forward = new Vector3(), right = new Vector3(), up = new Vector3();
 const ray = new Vector3(), position = new Vector3();
 let lastView = '';
 export function updateDiskMarkers(camera, config) {
+  const docked = compactViewport.matches;
+  root.querySelector('.disk-markers').classList.toggle('is-docked', docked);
+  // On phones, keep every section in a stable, thumb-friendly navigation bar.
+  if (docked) {
+    lastView = '';
+    return;
+  }
   const view = [...camera.position, ...camera.quaternion, innerWidth, innerHeight,
     config.diskOuterRadius, config.diskInnerRadius, config.blackHoleMass,
     config.stepSize, config.gravitationalLensing].join(',');
@@ -358,10 +281,13 @@ export function updateDiskMarkers(camera, config) {
       }
     }
     const marker = markers[index];
-    marker.hidden = edge === null;
-    if (edge !== null) {
-      marker.style.left = `${(1 + dx * edge) * innerWidth / 2}px`;
-      marker.style.top = `${(1 + dy * edge) * innerHeight / 2}px`;
-    }
+    // Keep navigation reachable even when a disk edge rotates out of view.
+    const distance = edge ?? .75;
+    const halfWidth = marker.offsetWidth / 2 + 16;
+    const halfHeight = marker.offsetHeight / 2 + 16;
+    marker.style.left = `${Math.max(halfWidth, Math.min(innerWidth - halfWidth,
+      (1 + dx * distance) * innerWidth / 2))}px`;
+    marker.style.top = `${Math.max(halfHeight, Math.min(innerHeight - halfHeight,
+      (1 + dy * distance) * innerHeight / 2))}px`;
   });
 }

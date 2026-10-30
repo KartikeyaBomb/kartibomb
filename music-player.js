@@ -1,5 +1,6 @@
 import './music-player.css';
 import { Vector3 } from 'three/webgpu';
+import { compactViewport } from './viewport.js';
 
 const spotifyTracks = [
   '7JM1c8Vn3tl00JPYLcHWN1',
@@ -20,7 +21,7 @@ for (let index = spotifyTracks.length - 1; index > 0; index--) {
 let trackIndex = 0;
 const root = document.createElement('div');
 root.innerHTML = `
-  <button class="singularity-music" type="button" aria-label="Open Spotify player" aria-controls="music-player" aria-expanded="false" title="Click to open music" hidden>
+  <button class="singularity-music is-docked" type="button" aria-label="Open Spotify player" aria-controls="music-player" aria-expanded="false" title="Open music">
     <svg class="singularity-music-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
       <path d="M4 14v-3a8 8 0 0 1 16 0v3" />
       <rect x="3" y="12" width="4" height="8" rx="2" />
@@ -31,6 +32,7 @@ root.innerHTML = `
     <button class="music-previous" type="button" aria-label="Previous song" title="Previous song">⏮</button>
     <div class="music-embed"><div class="music-embed-mount"></div></div>
     <button class="music-next" type="button" aria-label="Next song" title="Next song">⏭</button>
+    <button class="music-close" type="button" aria-label="Close music player" title="Close music player">×</button>
   </section>
 `;
 document.body.append(root);
@@ -60,7 +62,30 @@ function changeTrack(direction) {
 }
 previous.addEventListener('click', () => changeTrack(-1));
 next.addEventListener('click', () => changeTrack(1));
+function closePlayer() {
+  player.hidden = true;
+  playWhenReady = false;
+  controller?.pause();
+  trigger.setAttribute('aria-expanded', 'false');
+  trigger.focus();
+}
+root.querySelector('.music-close').addEventListener('click', closePlayer);
+window.addEventListener('portfolio:viewchange', event => {
+  if (event.detail === 'simple') {
+    player.hidden = true;
+    playWhenReady = false;
+    controller?.pause();
+    trigger.setAttribute('aria-expanded', 'false');
+  }
+});
+player.addEventListener('keydown', event => {
+  if (event.key === 'Escape') closePlayer();
+});
 trigger.addEventListener('click', () => {
+  if (!player.hidden) {
+    closePlayer();
+    return;
+  }
   player.hidden = false;
   trigger.setAttribute('aria-expanded', 'true');
   if (controller) controller.play();
@@ -96,6 +121,12 @@ document.body.append(script);
 
 const center = new Vector3();
 export function updateMusicTrigger(camera, config) {
+  trigger.classList.toggle('is-docked', compactViewport.matches);
+  if (compactViewport.matches) {
+    trigger.hidden = false;
+    trigger.removeAttribute('style');
+    return;
+  }
   center.set(0, 0, 0).project(camera);
   trigger.hidden = center.z < -1 || center.z > 1;
   trigger.style.left = `${(center.x + 1) * innerWidth / 2}px`;
