@@ -25,8 +25,15 @@ switcher.className = 'view-switcher';
 switcher.setAttribute('role', 'group');
 switcher.setAttribute('aria-label', 'Portfolio view');
 switcher.innerHTML = `
-  <button type="button" data-view="immersive" aria-pressed="false">Black hole</button>
-  <button type="button" data-view="simple" aria-pressed="false">Simple view</button>
+  <button type="button" data-view="immersive" aria-pressed="false">
+    <svg class="view-doodle" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><ellipse cx="14" cy="14" rx="12" ry="5" transform="rotate(-30 14 14)"/><circle cx="14" cy="14" r="5"/><path d="M22 2v5m-2.5-2.5h5" stroke-linecap="round"/></svg>
+    <span>My galaxy</span>
+  </button>
+  <span class="view-divider" aria-hidden="true">·</span>
+  <button type="button" data-view="simple" aria-pressed="false">
+    <svg class="view-doodle" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="m7 3 15 2-2 20-15-2Z" stroke-linejoin="round"/><path d="m10 9 8 1m-8.5 4 8 1m-8.5 4 5 .6" stroke-linecap="round"/></svg>
+    <span>Simple view</span>
+  </button>
 `;
 
 const portfolio = document.createElement('main');

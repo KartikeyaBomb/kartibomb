@@ -4,25 +4,44 @@
   right: max(20px, env(safe-area-inset-right));
   z-index: 150;
   display: flex;
-  gap: 4px;
-  padding: 4px;
-  border: 1px solid #ffd09340;
-  border-radius: 14px;
-  background: #101119f2;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 6px;
+  border-radius: 4px 16px 6px 14px;
+  background: #101119e8;
 }
 .view-switcher button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
   min-height: 44px;
-  padding: 8px 14px;
+  padding: 8px;
   border: 0;
   border-radius: 10px;
   background: transparent;
   color: #bcb6b0;
-  font: 14px/1.3 'Satoshi', sans-serif;
+  font: italic 17px/1.3 Georgia, serif;
   cursor: pointer;
   touch-action: manipulation;
 }
-.view-switcher button[aria-pressed="true"] { background: #ffe6c6; color: #241c18; }
-.view-switcher button:hover:not([aria-pressed="true"]) { background: #ffe6c612; color: #ffe6c6; }
+.view-doodle { width: 25px; height: 25px; flex-shrink: 0; transition: transform .2s ease; }
+.view-divider { color: #bcb6b0; padding-inline: 2px; }
+.view-switcher button[aria-pressed="true"] { color: #ffe6c6; }
+.view-switcher button[aria-pressed="true"] span {
+  text-decoration: underline wavy;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 6px;
+}
+.view-switcher button:hover { color: #ffe6c6; }
+.view-switcher button:hover .view-doodle { transform: rotate(-12deg) scale(1.08); }
+@media (prefers-reduced-motion: reduce) {
+  .view-doodle { transition: none; }
+  .view-switcher button:hover .view-doodle { transform: none; }
+}
+@media (max-width: 380px) {
+  .view-switcher button { padding-inline: 6px; gap: 6px; font-size: 16px; }
+  .view-doodle { width: 23px; height: 23px; }
+}
 .view-switcher button:focus-visible {
   outline: 2px solid #ffd093;
   outline-offset: 3px;
@@ -33,10 +52,11 @@ html[data-portfolio-view="simple"], html[data-portfolio-view="simple"] body {
   overflow: visible;
   background: #f5f1e9;
 }
-html[data-portfolio-view="simple"] .view-switcher { background: #fffdf8f5; border-color: #d8cebf; }
+html[data-portfolio-view="simple"] .view-switcher { background: #f5f1e9f5; }
 html[data-portfolio-view="simple"] .view-switcher button { color: #635b52; }
-html[data-portfolio-view="simple"] .view-switcher button[aria-pressed="true"] { background: #352f2a; color: #fffaf2; }
-html[data-portfolio-view="simple"] .view-switcher button:hover:not([aria-pressed="true"]) { background: #ece4d7; color: #352f2a; }
+html[data-portfolio-view="simple"] .view-switcher button[aria-pressed="true"],
+html[data-portfolio-view="simple"] .view-switcher button:hover { color: #8a4522; }
+html[data-portfolio-view="simple"] .view-divider { color: #8a7968; }
 html[data-portfolio-view="simple"] .view-switcher button:focus-visible,
 .simple-portfolio a:focus-visible { outline: 2px solid #8a4522; outline-offset: 3px; }
 /* Three.js applies an inline display style to its canvas. */
