@@ -99,7 +99,7 @@ export class CameraAnimation {
     this.controls.enabled = false;
 
     this.isPlaying = true;
-    this.currentTime = 0;
+    this.currentTime = 0; // change
   }
 
   /**
